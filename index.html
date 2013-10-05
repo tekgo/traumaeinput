@@ -1,0 +1,220 @@
+<html>
+	<head>
+		<title>Traumae Inputter</title>
+
+		<LINK href="/style.css" rel="stylesheet" type="text/css">
+
+		<style>
+
+			@font-face {
+			    font-family: 'septambres_fune';
+			    src: url('septambres-fune-webfont.eot');
+			    src: url('septambres-fune-webfont.eot?#iefix') format('embedded-opentype'),
+			         url('septambres-fune-webfont.woff') format('woff'),
+			         url('septambres-fune-webfont.ttf') format('truetype'),
+			         url('septambres-fune-webfont.svg#septambres_funeregular') format('svg');
+			    font-weight: normal;
+			    font-style: normal;
+
+			}
+
+
+			@font-face {
+			    font-family: 'septambres_revisit';
+			    src: url('septambres-revisit-webfont.eot');
+			    src: url('septambres-revisit-webfont.eot?#iefix') format('embedded-opentype'),
+			         url('septambres-revisit-webfont.woff') format('woff'),
+			         url('septambres-revisit-webfont.ttf') format('truetype'),
+			         url('septambres-revisit-webfont.svg#septambres_revisitregular') format('svg');
+			    font-weight: normal;
+			    font-style: normal;
+
+			}
+
+			a {
+				color:rgb(64,64,64);
+			}
+
+			#holder {
+				background:rgb(224,224,224);
+				width:320px;
+				margin:0px auto;
+				padding:.5em;
+			}
+			textarea {
+				width:100%;
+				margin:0px auto;
+			}
+
+			#result, #resultT {
+				font-size: 32px;
+				line-height: 64px;
+				width:100%;
+				min-height:64px;
+
+			}
+
+			#result .traum {
+				font-family:'septambres_revisit';
+			}
+		</style>
+
+		<script>
+
+			var transLatF = new Object;
+			transLatF["ki"] = "Q";
+			transLatF["ti"] = "q";
+			transLatF["pi"] = "r";
+
+			transLatF["ka"] = "A";
+			transLatF["ta"] = "a";
+			transLatF["pa"] = "f";
+
+			transLatF["ko"] = "Z";
+			transLatF["to"] = "z";
+			transLatF["po"] = "v";
+
+			transLatF["xi"] = "W";
+			transLatF["di"] = "w";
+			transLatF["bi"] = "t";
+
+			transLatF["xa"] = "S";
+			transLatF["da"] = "s";
+			transLatF["ba"] = "g";
+
+			transLatF["xo"] = "X";
+			transLatF["do"] = "x";
+			transLatF["bo"] = "b";
+
+			transLatF["si"] = "E";
+			transLatF["li"] = "e";
+			transLatF["vi"] = "y";
+
+			transLatF["sa"] = "D";
+			transLatF["la"] = "d";
+			transLatF["va"] = "h";
+
+			transLatF["so"] = "C";
+			transLatF["lo"] = "c";
+			transLatF["vo"] = "n";
+
+			var transLatR = new Object;
+			transLatR["ki"] = "q";
+			transLatR["ti"] = "r";
+			transLatR["pi"] = "u";
+
+			transLatR["ka"] = "a";
+			transLatR["ta"] = "f";
+			transLatR["pa"] = "j";
+
+			transLatR["ko"] = "z";
+			transLatR["to"] = "v";
+			transLatR["po"] = "m";
+
+			transLatR["xi"] = "w";
+			transLatR["di"] = "t";
+			transLatR["bi"] = "i";
+
+			transLatR["xa"] = "s";
+			transLatR["da"] = "g";
+			transLatR["ba"] = "j";
+
+			transLatR["xo"] = "x";
+			transLatR["do"] = "n";
+			transLatR["bo"] = ",";
+
+			transLatR["si"] = "e";
+			transLatR["li"] = "y";
+			transLatR["vi"] = "o";
+
+			transLatR["sa"] = "d";
+			transLatR["la"] = "h";
+			transLatR["va"] = "l";
+
+			transLatR["so"] = "c";
+			transLatR["lo"] = "n";
+			transLatR["vo"] = ".";
+
+			function translateIT() {
+				var input = document.getElementById("input");
+				var result = document.getElementById("result");
+				var input = input.value;//.toLowerCase();//.trim();
+				window.location.hash = encodeURIComponent(input.trim());
+				var splitter = new Array();
+				var temp = "";
+
+				for(var i=0;i<input.length;i++) {
+					var c = input.charAt(i);
+					var code = c.toLowerCase().charCodeAt(0);
+					if(code>=97 && code<=122) {
+						temp+=c;
+					}
+					else {
+						splitter.push(convertIT(temp,false));
+						temp="";
+						if(code==13 || code==10)
+							c="<br/>";
+						if(code>=48 && code<=57)
+							c = "<span class='traum'>"+c+"</span>";
+						splitter.push(c);
+					}
+				}
+
+				splitter.push(convertIT(temp,true));
+
+				result.innerHTML = splitter.join("");
+				document.getElementById("resultT").innerHTML =result.innerHTML;
+			}
+
+
+			function convertIT(input,isLast) {
+
+				var badInput = input;
+				input = input.toLowerCase();
+
+				if(input.charCodeAt(0)>=97 && input.charCodeAt(0)<=122) {
+					var result = "";
+					for(var i=0;i<input.length;i+=2) {
+						if(input.length-i==1) {
+							result+="|"
+						}
+						else {
+							result+=toLetter(input.charAt(i)+input.charAt(i+1));
+						}
+					}
+					if(result.indexOf("^") == -1 && (isLast || result.indexOf("|") == -1))
+					return "<span class='traum'>"+result+"</span>";
+				}
+
+				return badInput;
+			}
+
+			function toLetter(input) {
+				//console.log(input);
+				var result = transLatR[input];
+				//console.log(result);
+				if(result=="" || result===undefined)
+					result="^";
+
+				return result;
+			}
+
+		</script>
+	</head>
+	<body onload="document.getElementById('input').value=decodeURIComponent(window.location.hash.substring(1));translateIT();">
+		<div id="holder">
+			<div>Input romanized <a href="http://wiki.xxiivv.com/Traumae">Traumae</a> here:</div>
+			<textarea id="input" rows="4" onchange="translateIT();" onkeyup="translateIT();"></textarea>
+			<div>Symbols</div>
+			<div id="result">
+			</div>
+			<div>Input</div>
+			<div id="resultT">
+			</div>
+			<p><a href="http://wiki.xxiivv.com/Traumae">Traumae</a> is by <a href="http://wiki.xxiivv.com">Devine Lu Linvega</a>. Font is <a href="http://wiki.xxiivv.com/Septambres">Septambres Revisit</a>.
+		</div>
+
+		<iframe id="footerFrame" src="/footer.html"></iframe>
+
+	</body>
+</html>
